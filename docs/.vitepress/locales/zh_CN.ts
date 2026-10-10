@@ -40,6 +40,7 @@ export default defineConfig({
                     collapsed: false,
                     items: [
                         { text: "主题系统", link: "/zh_CN/guide/theme" },
+                        { text: "PiliNara 主题", link: "/zh_CN/guide/pilinara" },
                         { text: "颜色系统", link: "/zh_CN/guide/colors" },
                         { text: "文本样式", link: "/zh_CN/guide/textstyles" },
                         { text: "图标系统", link: "/zh_CN/guide/icons" },

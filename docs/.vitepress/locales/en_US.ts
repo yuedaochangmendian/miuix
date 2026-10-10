@@ -31,6 +31,7 @@ export default defineConfig({
                     collapsed: false,
                     items: [
                         { text: "Theme System", link: "/guide/theme" },
+                        { text: "PiliNara Theme", link: "/guide/pilinara" },
                         { text: "Color System", link: "/guide/colors" },
                         { text: "Text Styles", link: "/guide/textstyles" },
                         { text: "Icon System", link: "/guide/icons" },
