@@ -1,0 +1,54 @@
+# A fork-only workflow.
+#
+# The upstream workflows only run for pushes and pull requests that target `main`, so a feature
+# branch in a fork gets no build at all. This one builds the branch the PiliNara theme lives on,
+# and it builds Android only: the Android variant of every module plus the example app's debug APK.
+name: PiliNara Theme Build (Android)
+
+on:
+  push:
+    branches:
+      - "feat/pilinara-theme"
+      - "ci/pilinara-build"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pilinara-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Sources
+        uses: actions/checkout@v7
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: "zulu"
+          java-version: "21"
+      - name: Build with Gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Assemble the Android variants
+        run: ./gradlew assembleAndroidTest --console=plain
+      - name: Assemble the example app
+        run: ./gradlew :example:android:assembleDebug --console=plain
+      - name: List the built APKs
+        run: find example/android/build/outputs/apk -name "*.apk" -print
+      - name: Upload the example app
+        uses: actions/upload-artifact@v7
+        with:
+          name: example-android-debug-apk
+          path: example/android/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reports
+          path: |
+            **/build/reports/**
