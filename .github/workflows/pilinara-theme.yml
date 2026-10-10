@@ -2,8 +2,8 @@
 #
 # The upstream workflows only run for pushes and pull requests that target `main`, so a feature
 # branch in a fork gets no build at all. This one builds the branch the PiliNara theme lives on,
-# running the same ubuntu targets as the upstream `Build All Tests` workflow.
-name: PiliNara Theme Build
+# and it builds Android only: the Android variant of every module plus the example app's debug APK.
+name: PiliNara Theme Build (Android)
 
 on:
   push:
@@ -16,21 +16,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: pilinara-${{ github.ref }}
+  group: pilinara-android-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: ${{ matrix.target }}
+  android:
+    name: Android
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: "spotlessCheck"
-          - target: ":miuix-ui:desktopTest"
-          - target: "assembleAndroidTest"
-          - target: "wasmJsBrowserTest"
     steps:
       - name: Checkout Sources
         uses: actions/checkout@v7
@@ -41,12 +33,22 @@ jobs:
           java-version: "21"
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v6
-      - name: Run build
-        run: ./gradlew ${{ matrix.target }} --console=plain
+      - name: Assemble the Android variants
+        run: ./gradlew assembleAndroidTest --console=plain
+      - name: Assemble the example app
+        run: ./gradlew :example:android:assembleDebug --console=plain
+      - name: List the built APKs
+        run: find example/android/build/outputs/apk -name "*.apk" -print
+      - name: Upload the example app
+        uses: actions/upload-artifact@v7
+        with:
+          name: example-android-debug-apk
+          path: example/android/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: reports-${{ strategy.job-index }}
+          name: reports
           path: |
             **/build/reports/**
