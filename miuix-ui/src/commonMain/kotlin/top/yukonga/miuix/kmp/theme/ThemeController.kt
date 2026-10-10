@@ -61,7 +61,27 @@ internal fun colorsFromSeed(
     colorSpec: ThemeColorSpec,
     paletteStyle: ThemePaletteStyle,
     dark: Boolean,
-): Colors {
+): Colors = mapMd3RolesToMiuixColorsCommon(
+    roles = dynamicSchemeFromSeed(seed, colorSpec, paletteStyle, dark).toMonetRoles(),
+    dark = dark,
+)
+
+/**
+ * Builds the Material Color Utilities dynamic scheme a seed color resolves to.
+ *
+ * @param seed The seed color.
+ * @param colorSpec The color spec to request, downgraded to [ThemeColorSpec.Spec2021] when
+ *   [paletteStyle] does not support [ThemeColorSpec.Spec2025].
+ * @param paletteStyle The palette style of the scheme.
+ * @param dark Whether to build the dark scheme.
+ */
+@Stable
+internal fun dynamicSchemeFromSeed(
+    seed: Color,
+    colorSpec: ThemeColorSpec,
+    paletteStyle: ThemePaletteStyle,
+    dark: Boolean,
+): DynamicScheme {
     // Check if the selected style supports SPEC_2025
     val isSpec2025Supported = when (paletteStyle) {
         ThemePaletteStyle.TonalSpot,
@@ -81,7 +101,7 @@ internal fun colorsFromSeed(
     }
 
     val hctColor = Hct.fromInt(seed.toArgb())
-    val scheme: DynamicScheme = when (paletteStyle) {
+    return when (paletteStyle) {
         ThemePaletteStyle.TonalSpot -> SchemeTonalSpot(
             sourceColorHct = hctColor,
             isDark = dark,
@@ -154,36 +174,6 @@ internal fun colorsFromSeed(
             platform = DynamicScheme.Platform.PHONE,
         )
     }
-    val roles = MonetRoles(
-        primary = Color(scheme.primary),
-        onPrimary = Color(scheme.onPrimary),
-        primaryFixed = Color(scheme.primaryFixed),
-        onPrimaryFixed = Color(scheme.onPrimaryFixed),
-        error = Color(scheme.error),
-        onError = Color(scheme.onError),
-        errorContainer = Color(scheme.errorContainer),
-        onErrorContainer = Color(scheme.onErrorContainer),
-        primaryContainer = Color(scheme.primaryContainer),
-        onPrimaryContainer = Color(scheme.onPrimaryContainer),
-        secondary = Color(scheme.secondary),
-        onSecondary = Color(scheme.onSecondary),
-        secondaryContainer = Color(scheme.secondaryContainer),
-        onSecondaryContainer = Color(scheme.onSecondaryContainer),
-        tertiaryContainer = Color(scheme.tertiaryContainer),
-        onTertiaryContainer = Color(scheme.onTertiaryContainer),
-        background = Color(scheme.background),
-        onBackground = Color(scheme.onBackground),
-        surface = Color(scheme.surface),
-        onSurface = Color(scheme.onSurface),
-        surfaceVariant = Color(scheme.surfaceVariant),
-        surfaceContainer = Color(scheme.surfaceContainer),
-        surfaceContainerHigh = Color(scheme.surfaceContainerHigh),
-        surfaceContainerHighest = Color(scheme.surfaceContainerHighest),
-        outline = Color(scheme.outline),
-        outlineVariant = Color(scheme.outlineVariant),
-        onSurfaceVariant = Color(scheme.onSurfaceVariant),
-    )
-    return mapMd3RolesToMiuixColorsCommon(roles, dark)
 }
 
 @Stable

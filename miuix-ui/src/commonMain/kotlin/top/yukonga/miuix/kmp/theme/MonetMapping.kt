@@ -4,6 +4,7 @@
 package top.yukonga.miuix.kmp.theme
 
 import androidx.compose.ui.graphics.Color
+import com.materialkolor.scheme.DynamicScheme
 
 /**
  * A data class representing the Monet color roles.
@@ -36,6 +37,43 @@ internal data class MonetRoles(
     val outline: Color,
     val outlineVariant: Color,
     val onSurfaceVariant: Color,
+)
+
+/** Reads the Monet color roles out of a Material Color Utilities dynamic scheme.
+ *
+ * The roles that [Colors] has no slot for, such as `inversePrimary`, `surfaceTint`,
+ * `inverseSurface` and `onInverseSurface`, are not carried over.
+ *
+ * @return The [MonetRoles] of this scheme.
+ */
+internal fun DynamicScheme.toMonetRoles(): MonetRoles = MonetRoles(
+    primary = Color(primary),
+    onPrimary = Color(onPrimary),
+    primaryFixed = Color(primaryFixed),
+    onPrimaryFixed = Color(onPrimaryFixed),
+    error = Color(error),
+    onError = Color(onError),
+    errorContainer = Color(errorContainer),
+    onErrorContainer = Color(onErrorContainer),
+    primaryContainer = Color(primaryContainer),
+    onPrimaryContainer = Color(onPrimaryContainer),
+    secondary = Color(secondary),
+    onSecondary = Color(onSecondary),
+    secondaryContainer = Color(secondaryContainer),
+    onSecondaryContainer = Color(onSecondaryContainer),
+    tertiaryContainer = Color(tertiaryContainer),
+    onTertiaryContainer = Color(onTertiaryContainer),
+    background = Color(background),
+    onBackground = Color(onBackground),
+    surface = Color(surface),
+    onSurface = Color(onSurface),
+    surfaceVariant = Color(surfaceVariant),
+    surfaceContainer = Color(surfaceContainer),
+    surfaceContainerHigh = Color(surfaceContainerHigh),
+    surfaceContainerHighest = Color(surfaceContainerHighest),
+    outline = Color(outline),
+    outlineVariant = Color(outlineVariant),
+    onSurfaceVariant = Color(onSurfaceVariant),
 )
 
 /** Composites a foreground color over a background color using alpha blending.
